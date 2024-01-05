@@ -4307,6 +4307,108 @@
             }
           }
         ]
+      },
+      {
+        "name": "Groupe de calcul",
+        "calculationGroup": {
+          "precedence": 5
+        },
+        "columns": [
+          {
+            "name": "Colonne du groupe de calcul",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ab218105-c180-4f00-ba36-f09347035329",
+            "sortByColumn": "Ordinal",
+            "sourceColumn": "Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Ordinal",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "d469e8d0-b2dc-419d-a236-7e6df3f3b672",
+            "sourceColumn": "Ordinal",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "b5567b5e-0d31-474e-946d-41bd27d22f35",
+        "partitions": [
+          {
+            "name": "Groupe de calcul",
+            "mode": "import",
+            "source": {
+              "type": "calculationGroup"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Test_github",
+        "calculationGroup": {
+          "calculationItems": [
+            {
+              "name": "TestA",
+              "expression": "SELECTEDMEASURE()"
+            },
+            {
+              "name": "TestB",
+              "expression": "SELECTEDMEASURE()"
+            }
+          ],
+          "precedence": 6
+        },
+        "columns": [
+          {
+            "name": "Test1",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "55477ecb-d9a0-4ab7-bd07-7168f74921bc",
+            "sortByColumn": "Ordinal",
+            "sourceColumn": "Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Ordinal",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "4086c494-24ba-4272-beff-4d3cb8a48f68",
+            "sourceColumn": "Ordinal",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "47a3e275-1ad7-46b1-88ad-b208f4bc86b5",
+        "partitions": [
+          {
+            "name": "Test_github",
+            "mode": "import",
+            "source": {
+              "type": "calculationGroup"
+            }
+          }
+        ]
       }
     ]
   }
