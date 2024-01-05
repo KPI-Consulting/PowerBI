@@ -4420,6 +4420,44 @@
             }
           }
         ]
+      },
+      {
+        "name": "Test2_tabular_editor",
+        "calculationGroup": {
+          "calculationItems": [
+            {
+              "name": "New Calculation",
+              "expression": "selectedmeasure()"
+            }
+          ],
+          "precedence": 7
+        },
+        "columns": [
+          {
+            "name": "Tabular",
+            "dataType": "string",
+            "lineageTag": "6a0b2d28-2d1b-48ad-a507-313570123f86",
+            "sortByColumn": "Ordinal",
+            "sourceColumn": "Name"
+          },
+          {
+            "name": "Ordinal",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "fd6bf233-7977-4b49-9401-caa8af0d377f",
+            "sourceColumn": "Ordinal"
+          }
+        ],
+        "lineageTag": "36a248f2-4e23-46b7-bc64-64fc6fc6f7e5",
+        "partitions": [
+          {
+            "name": "Partition",
+            "mode": "import",
+            "source": {
+              "type": "calculationGroup"
+            }
+          }
+        ]
       }
     ]
   }
