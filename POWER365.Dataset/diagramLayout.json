@@ -356,6 +356,32 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4960.9714492797848,
+            "y": 763.58561643835617
+          },
+          "nodeIndex": "Groupe de calcul",
+          "nodeLineageTag": "b5567b5e-0d31-474e-946d-41bd27d22f35",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5244.9714492797848,
+            "y": 763.58561643835617
+          },
+          "nodeIndex": "Test_github",
+          "nodeLineageTag": "47a3e275-1ad7-46b1-88ad-b208f4bc86b5",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "Toutes les tables",
