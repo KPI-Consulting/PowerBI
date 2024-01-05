@@ -57,15 +57,15 @@
           }
         ],
         "expression": [
-          "(Nom_Fichier)=>",
-          "",
-          "let",
-          "    Source = Excel.Workbook(File.Contents(Chemin_Dossier & \"\\Commandes\\\" & Nom_Fichier), null, true),",
-          "    Feuil1_Sheet = Source{[Item=\"Feuil1\",Kind=\"Sheet\"]}[Data],",
-          "    #\"En-têtes promus\" = Table.PromoteHeaders(Feuil1_Sheet, [PromoteAllScalars=true]),",
-          "    #\"Type modifié\" = Table.TransformColumnTypes(#\"En-têtes promus\",{{\"OrderID\", Int64.Type}, {\"CustomerID\", type text}, {\"EmployeeID\", Int64.Type}, {\"OrderDate\", type datetime}, {\"RequiredDate\", type datetime}, {\"ShippedDate\", type datetime}, {\"ShipVia\", Int64.Type}, {\"Freight\", type number}, {\"ShipName\", type text}, {\"ShipAddress\", type text}, {\"ShipCity\", type text}, {\"ShipRegion\", type text}, {\"ShipPostalCode\", type text}, {\"ShipCountry\", type text}}),",
-          "    #\"Autres colonnes supprimées\" = Table.SelectColumns(#\"Type modifié\",{\"OrderID\", \"CustomerID\", \"EmployeeID\", \"OrderDate\", \"RequiredDate\", \"ShippedDate\", \"ShipVia\", \"Freight\", \"ShipCountry\"})",
-          "in",
+          "(Nom_Fichier)=>\r",
+          "\r",
+          "let\r",
+          "    Source = Excel.Workbook(File.Contents(Chemin_Dossier & \"\\Commandes\\\" & Nom_Fichier), null, true),\r",
+          "    Feuil1_Sheet = Source{[Item=\"Feuil1\",Kind=\"Sheet\"]}[Data],\r",
+          "    #\"En-têtes promus\" = Table.PromoteHeaders(Feuil1_Sheet, [PromoteAllScalars=true]),\r",
+          "    #\"Type modifié\" = Table.TransformColumnTypes(#\"En-têtes promus\",{{\"OrderID\", Int64.Type}, {\"CustomerID\", type text}, {\"EmployeeID\", Int64.Type}, {\"OrderDate\", type datetime}, {\"RequiredDate\", type datetime}, {\"ShippedDate\", type datetime}, {\"ShipVia\", Int64.Type}, {\"Freight\", type number}, {\"ShipName\", type text}, {\"ShipAddress\", type text}, {\"ShipCity\", type text}, {\"ShipRegion\", type text}, {\"ShipPostalCode\", type text}, {\"ShipCountry\", type text}}),\r",
+          "    #\"Autres colonnes supprimées\" = Table.SelectColumns(#\"Type modifié\",{\"OrderID\", \"CustomerID\", \"EmployeeID\", \"OrderDate\", \"RequiredDate\", \"ShippedDate\", \"ShipVia\", \"Freight\", \"ShipCountry\"})\r",
+          "in\r",
           "    #\"Autres colonnes supprimées\""
         ],
         "kind": "m",
@@ -235,10 +235,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -413,10 +409,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -549,10 +541,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -665,10 +653,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -858,10 +842,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -974,10 +954,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -1293,10 +1269,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -1372,10 +1344,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -2696,7 +2664,7 @@
                 "value": "{\"isGeneralNumber\":true}"
               }
             ],
-            "expression": "\"Finalement il fait trop froid\"",
+            "expression": "\"Nouveau test de changement de mesure\"",
             "lineageTag": "f7577484-ec38-4d78-81d6-400f7e02c5d8"
           }
         ],
@@ -2971,10 +2939,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -3099,10 +3063,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
@@ -3160,12 +3120,12 @@
               "expression": "[CA]",
               "formatStringDefinition": {
                 "expression": [
-                  "VAR _CAT = LOOKUPVALUE(Table_couleurs[CAT],Table_couleurs[CAT],SELECTEDVALUE(Categories[CategoryName]),\"N/C\")",
-                  "VAR _tableCouleurs = FILTER(Table_couleurs,[CAT]=_CAT)",
-                  "RETURN",
-                  "                MAXX(",
-                  "                    _tableCouleurs,",
-                  "                    [code_couleur]",
+                  "VAR _CAT = LOOKUPVALUE(Table_couleurs[CAT],Table_couleurs[CAT],SELECTEDVALUE(Categories[CategoryName]),\"N/C\")\r",
+                  "VAR _tableCouleurs = FILTER(Table_couleurs,[CAT]=_CAT)\r",
+                  "RETURN\r",
+                  "                MAXX(\r",
+                  "                    _tableCouleurs,\r",
+                  "                    [code_couleur]\r",
                   "                    )"
                 ]
               }
@@ -3220,11 +3180,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Exception"
-          }
-        ],
-        "changedProperties": [
-          {
-            "property": "Name"
           }
         ],
         "columns": [
@@ -3350,11 +3305,6 @@
             "value": "Exception"
           }
         ],
-        "changedProperties": [
-          {
-            "property": "Name"
-          }
-        ],
         "columns": [
           {
             "name": "CategoryID",
@@ -3444,11 +3394,6 @@
       },
       {
         "name": "Z_PY🐍_Employes",
-        "changedProperties": [
-          {
-            "property": "Name"
-          }
-        ],
         "columns": [
           {
             "name": "EmployeeID",
@@ -3538,11 +3483,6 @@
       },
       {
         "name": "Z_PY🐍_Clients",
-        "changedProperties": [
-          {
-            "property": "Name"
-          }
-        ],
         "columns": [
           {
             "name": "CustomerID",
@@ -3724,11 +3664,6 @@
       },
       {
         "name": "Z_PY🐍_Fournisseurs",
-        "changedProperties": [
-          {
-            "property": "Name"
-          }
-        ],
         "columns": [
           {
             "name": "SupplierID",
@@ -3907,11 +3842,6 @@
       },
       {
         "name": "Z_PY🐍_Region",
-        "changedProperties": [
-          {
-            "property": "Name"
-          }
-        ],
         "columns": [
           {
             "name": "Code_region",
@@ -3961,10 +3891,6 @@
       {
         "name": "Z_PY🐍_Detail_Commandes",
         "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
           {
             "name": "PBI_ResultType",
             "value": "Table"
@@ -4280,10 +4206,6 @@
           {
             "name": "PBI_ResultType",
             "value": "Table"
-          },
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
           }
         ],
         "columns": [
