@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    background: #080818;
+    color: #E2E8F0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: linear-gradient(135deg, #0f0f2e 0%, #1a0a2e 50%, #0a1a2e 100%);
+    border-bottom: 1px solid #1e2a4e;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  #header-icon {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    border-radius: 10px;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0; color: #fff;
+  }
+  #header h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+  #header p  { font-size: 11px; color: #64748B; margin-top: 2px; }
+  #header-badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .hbadge {
+    border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+  }
+  .hbadge-red  { background: #EF444420; color: #F87171; border: 1px solid #EF444440; }
+  .hbadge-green{ background: #10B98120; color: #4ADE80; border: 1px solid #10B98140; }
+
+  /* ── LAYOUT ── */
+  #layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #0a0a1e;
+    border-right: 1px solid #1e2a4e;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  #cat-header {
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid #1e2a4e;
+  }
+  #cat-label {
+    font-size: 10px; color: #475569; font-weight: 700;
+    letter-spacing: .08em; margin-bottom: 8px;
+  }
+  #cat-filters { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cat-btn {
+    border-radius: 5px; padding: 3px 9px; font-size: 11px;
+    cursor: pointer; font-weight: 400; transition: all .15s;
+    border: 1px solid #1e2a4e; background: transparent; color: #64748B;
+  }
+  .cat-btn.active { font-weight: 700; }
+
+  .sidebar-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #0e1320;
+    transition: all .15s;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,0.03); }
+  .sidebar-item-top {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+  }
+  .item-num {
+    background: #0f0f2e; color: #475569; border-radius: 50%;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0; font-family: monospace;
+  }
+  .item-title { font-weight: 700; font-size: 13px; font-family: monospace; }
+  .item-title .paren { color: #475569; }
+  .item-meta {
+    margin-left: 28px; display: flex; align-items: center; gap: 6px;
+  }
+  .item-badge {
+    border-radius: 3px; padding: 1px 7px; font-size: 10px;
+    font-family: monospace; font-weight: 600;
+  }
+  .item-cat { color: #475569; font-size: 10px; }
+
+  /* ── MAIN ── */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px 28px;
+  }
+
+  /* Title row */
+  #title-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  #title-icon {
+    border-radius: 8px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; font-family: monospace; flex-shrink: 0;
+  }
+  #main-title {
+    font-size: 20px; font-weight: 800;
+    font-family: monospace; color: #F1F5F9;
+  }
+  #main-subtitle { font-size: 12px; color: #64748B; margin-top: 2px; }
+  #tags-row { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    background: #1e2a4e; color: #94A3B8;
+    border-radius: 4px; padding: 2px 9px;
+    font-size: 11px; font-family: monospace;
+  }
+
+  /* Use case box */
+  #use-case {
+    border-radius: 8px; padding: 13px 16px; margin-bottom: 20px;
+    border-left-width: 3px; border-left-style: solid;
+  }
+  .use-case-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; margin-bottom: 6px;
+  }
+  #use-case p {
+    color: #CBD5E1; line-height: 1.65; font-size: 13px;
+  }
+
+  /* Section labels */
+  .section-label {
+    font-size: 10px; font-weight: 700; color: #64748B;
+    letter-spacing: .1em; margin-bottom: 10px;
+  }
+
+  /* Param table */
+  #param-wrap {
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid #1e2a4e; margin-bottom: 20px;
+  }
+  #param-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  #param-table thead tr { background: #1a1a2e; }
+  #param-table th {
+    padding: 9px 14px; text-align: left;
+    color: #94A3B8; font-weight: 700;
+    border-bottom: 1px solid #1e2a4e;
+    font-family: monospace;
+  }
+  #param-table td { padding: 8px 14px; border-bottom: 1px solid #1a1a2e; }
+  .td-name { font-family: monospace; font-weight: 700; color: #E2E8F0; }
+  .badge-type {
+    background: #1e3a5f; color: #60A5FA;
+    padding: 2px 8px; border-radius: 4px;
+    font-family: monospace; font-size: 11px;
+  }
+  .badge-mode {
+    padding: 2px 8px; border-radius: 4px;
+    font-family: monospace; font-size: 11px; font-weight: 700;
+  }
+  .badge-expr { background: #3b1515; color: #F87171; }
+  .badge-val  { background: #1a2e1a; color: #4ADE80; }
+  .td-desc { color: #94A3B8; line-height: 1.45; }
+
+  /* Code block */
+  #code-wrap {
+    border-radius: 8px; overflow: hidden;
+    background: #1E1E1E; border: 1px solid #2d2d2d;
+    margin-bottom: 16px;
+  }
+  #code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px; background: #252526; border-bottom: 1px solid #2d2d2d;
+  }
+  #code-lang { color: #858585; font-size: 11px; font-family: monospace; letter-spacing: 0.05em; }
+  #copy-btn {
+    background: transparent; border: 1px solid #444;
+    color: #aaa; padding: 3px 12px; border-radius: 4px;
+    cursor: pointer; font-size: 11px; font-family: monospace; transition: all 0.2s;
+  }
+  #copy-btn.copied { background: #10B981; border-color: #10B981; color: #fff; }
+  #code-pre {
+    margin: 0; padding: 16px 18px;
+    overflow-x: auto; font-size: 12.5px; line-height: 1.75;
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    background: #1E1E1E;
+  }
+
+  /* Note box */
+  #note-box {
+    background: #1a1505;
+    border: 1px solid #78350f40;
+    border-left: 3px solid #F59E0B;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+  }
+  #note-label {
+    font-size: 10px; font-weight: 700; color: #F59E0B;
+    letter-spacing: .1em; margin-bottom: 5px;
+  }
+  #note-text { color: #FCD34D; font-size: 12.5px; line-height: 1.6; }
+
+  /* Navigation */
+  #nav-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .nav-btn {
+    border-radius: 8px; padding: 9px 20px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; border: 1px solid #1e2a4e;
+    transition: all .15s;
+  }
+  .nav-btn:disabled { cursor: not-allowed; }
+  #btn-prev { background: #1e2a4e; color: #94A3B8; }
+  #btn-prev:disabled { background: #0f0f2e; color: #2d3748; }
+  #nav-counter { color: #475569; font-size: 12px; }
+  #btn-next {
+    background: linear-gradient(135deg, #3B82F6, #6366F1);
+    color: #fff; border: none;
+  }
+  #btn-next:disabled { background: #0f0f2e; color: #2d3748; border: 1px solid #1e2a4e; }
+
+  /* Syntax colours */
+  .t-comment { color: #6A9955; }
+  .t-string  { color: #CE9178; }
+  .t-ref     { color: #9CDCFE; }
+  .t-number  { color: #B5CEA8; }
+  .t-keyword { color: #569CD6; }
+  .t-type    { color: #4EC9B0; }
+  .t-plain   { color: #D4D4D4; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2a4e; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-icon">ƒ</div>
+  <div>
+    <h1>Power BI · DAX User-Defined Functions</h1>
+    <p>10 exemples complets · Types &amp; Modes de paramètres · Preview depuis sept. 2025</p>
+  </div>
+  <div id="header-badges">
+    <span class="hbadge hbadge-red">EXPR = Lazy</span>
+    <span class="hbadge hbadge-green">VAL = Eager</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div id="cat-header">
+      <div id="cat-label">CATÉGORIES</div>
+      <div id="cat-filters"></div>
+    </div>
+    <div id="item-list"></div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div id="main">
+    <div id="title-row">
+      <div id="title-icon"></div>
+      <div>
+        <div id="main-title"></div>
+        <div id="main-subtitle"></div>
+      </div>
+      <div id="tags-row"></div>
+    </div>
+
+    <div id="use-case">
+      <div class="use-case-label" id="use-case-label">CAS D'USAGE</div>
+      <p id="use-case-text"></p>
+    </div>
+
+    <div class="section-label">PARAMÈTRES</div>
+    <div id="param-wrap">
+      <table id="param-table">
+        <thead>
+          <tr>
+            <th>Paramètre</th><th>Type</th><th>Mode</th><th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="param-body"></tbody>
+      </table>
+    </div>
+
+    <div class="section-label">CODE DAX COMPLET</div>
+    <div id="code-wrap">
+      <div id="code-header">
+        <span id="code-lang">DAX · Power BI Desktop</span>
+        <button id="copy-btn" onclick="copyCode()">Copier</button>
+      </div>
+      <pre id="code-pre"></pre>
+    </div>
+
+    <div id="note-box">
+      <div id="note-label">NOTE IMPORTANTE</div>
+      <p id="note-text"></p>
+    </div>
+
+    <div id="nav-row">
+      <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← Précédent</button>
+      <span id="nav-counter"></span>
+      <button class="nav-btn" id="btn-next" onclick="navigate(1)">Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const examples = [
+  {
+    id: 1, title: "AddTax",
+    subtitle: "Scalaire · NUMERIC · VAL",
+    badge: "Scalar VAL", badgeColor: "#3B82F6", category: "Basique",
+    tags: ["NUMERIC", "VAL", "Scalaire"],
+    useCase: "Calcul de TVA ou de toute majoration fixe. Le paramètre est évalué immédiatement (VAL = eager) — parfait quand la valeur ne dépend pas du contexte de filtre.",
+    paramDetails: [
+      { name: "amount", type: "NUMERIC", mode: "VAL", desc: "Montant brut passé directement à la fonction" }
+    ],
+    code: [
+      "/// AddTax — Ajoute une TVA de 10% sur un montant donné",
+      "/// Paramètre : NUMERIC VAL (évaluation immédiate)",
+      "FUNCTION AddTax = (",
+      "    amount : NUMERIC VAL",
+      ") =>",
+      "    amount * 1.1",
+      "",
+      "-- Test dans le DAX Query View :",
+      "DEFINE",
+      "    FUNCTION AddTax = ( amount : NUMERIC VAL ) => amount * 1.1",
+      "EVALUATE",
+      "    { AddTax ( 100 ) }          -- retourne 110",
+      "",
+      "-- Utilisation dans une mesure :",
+      "[Ventes TTC] =",
+      "    CONVERT( AddTax( SUM( Sales[Montant] ) ), CURRENCY )",
+    ],
+    notes: "CONVERT est nécessaire car les UDF retournent un type variant par défaut."
+  },
+  {
+    id: 2, title: "FormatVariation",
+    subtitle: "Décimal · VAL · Formatage conditionnel",
+    badge: "DECIMAL VAL", badgeColor: "#8B5CF6", category: "Formatage",
+    tags: ["DECIMAL", "VAL", "FORMAT", "DIVIDE"],
+    useCase: "Formatage d'une variation en pourcentage avec signe + ou − affiché. Idéal pour les KPIs de croissance dans des cartes ou matrices.",
+    paramDetails: [
+      { name: "current",  type: "DECIMAL", mode: "VAL", desc: "Valeur de la période courante" },
+      { name: "previous", type: "DECIMAL", mode: "VAL", desc: "Valeur de la période précédente" }
+    ],
+    code: [
+      '/// FormatVariation — Formate une variation en %',
+      '/// Retourne "+12.5%" ou "-3.2%" avec signe explicite',
+      "FUNCTION FormatVariation = (",
+      "    current  : DECIMAL VAL,",
+      "    previous : DECIMAL VAL",
+      ") =>",
+      "    VAR _ratio = DIVIDE( current - previous, previous, BLANK() )",
+      '    VAR _sign  = IF( _ratio >= 0, "+", "" )',
+      "    RETURN",
+      "        IF(",
+      "            ISBLANK( _ratio ),",
+      '            "N/A",',
+      '            _sign & FORMAT( _ratio, "0.0%" )',
+      "        )",
+      "",
+      "-- Utilisation dans une mesure :",
+      "[Variation CA Affiché] =",
+      "    FormatVariation(",
+      "        [CA Période],",
+      "        [CA Période Précédente]",
+      "    )",
+    ],
+    notes: "Les deux paramètres sont VAL : les agrégats SUM, AVERAGE... doivent être calculés avant l'appel."
+  },
+  {
+    id: 3, title: "ClassifyCustomer",
+    subtitle: "Scalaire · DECIMAL · Segmentation",
+    badge: "DECIMAL VAL", badgeColor: "#F59E0B", category: "Métier",
+    tags: ["DECIMAL", "VAL", "SWITCH", "Segmentation"],
+    useCase: "Segmentation client basée sur le chiffre d'affaires. La logique de scoring est centralisée dans la UDF — modifier les seuils se fait en un seul endroit pour tout le modèle.",
+    paramDetails: [
+      { name: "customerSpend", type: "DECIMAL", mode: "VAL", desc: "CA total du client" }
+    ],
+    code: [
+      '/// ClassifyCustomer — Segmente un client selon son CA',
+      '/// Retourne : "VIP" | "Premium" | "Regular" | "New"',
+      "FUNCTION ClassifyCustomer = (",
+      "    customerSpend : DECIMAL VAL",
+      ") =>",
+      "    SWITCH(",
+      "        TRUE(),",
+      '        customerSpend >= 10000, "VIP",',
+      '        customerSpend >= 5000,  "Premium",',
+      '        customerSpend >= 1000,  "Regular",',
+      '        "New"',
+      "    )",
+      "",
+      "-- Colonne calculée :",
+      "Clients[Segment] =",
+      "    ClassifyCustomer( Clients[CA Total] )",
+      "",
+      "-- Mesure (avec agrégation préalable) :",
+      "[Segment Client Actif] =",
+      "    ClassifyCustomer(",
+      "        CALCULATE( SUM( Sales[Amount] ), ALLSELECTED() )",
+      "    )",
+    ],
+    notes: "En colonne calculée, la valeur de ligne est passée directement. En mesure, agréger d'abord avant de passer à la UDF."
+  },
+  {
+    id: 4, title: "YoYGrowth",
+    subtitle: "MeasureRef · EXPR · Time Intelligence",
+    badge: "MEASURE EXPR", badgeColor: "#EF4444", category: "Time Intelligence",
+    tags: ["MeasureRef", "EXPR", "DATEADD", "Context-Sensitive"],
+    useCase: "Calcul YoY générique, réutilisable sur n'importe quelle mesure. Le mode EXPR est OBLIGATOIRE ici : la mesure doit être réévaluée dans chaque contexte de filtre (chaque ligne de la matrice).",
+    paramDetails: [
+      { name: "metric", type: "MeasureRef", mode: "EXPR", desc: "Référence à une mesure — évaluée lazily dans chaque contexte de filtre" }
+    ],
+    code: [
+      "/// YoYGrowth — Variation année sur année d'une mesure quelconque",
+      "/// EXPR indispensable : réévaluation dans chaque contexte de filtre",
+      "FUNCTION YoYGrowth = (",
+      "    metric : MEASURE EXPR",
+      ") =>",
+      "    VAR _current = metric",
+      "    VAR _py      = CALCULATE( metric, DATEADD( 'Date'[Date], -1, YEAR ) )",
+      "    RETURN",
+      "        DIVIDE( _current - _py, _py, BLANK() )",
+      "",
+      "-- Une seule fonction pour toutes les mesures :",
+      "[YoY CA]       = YoYGrowth( [CA Total] )",
+      "[YoY Quantité] = YoYGrowth( [Quantité Vendue] )",
+      "[YoY Marge]    = YoYGrowth( [Marge Brute] )",
+    ],
+    notes: "Sans EXPR, la mesure serait figée à sa valeur au moment de l'appel — le contexte de filtre serait ignoré. C'est le piège le plus fréquent avec les UDF."
+  },
+  {
+    id: 5, title: "MtdCalculation",
+    subtitle: "MeasureRef · EXPR · MTD dynamique",
+    badge: "MEASURE EXPR", badgeColor: "#EF4444", category: "Time Intelligence",
+    tags: ["MeasureRef", "EXPR", "DATESMTD"],
+    useCase: "Calcul MTD (Month-To-Date) générique et réutilisable. Comme pour YoY, EXPR est obligatoire pour que la mesure soit évaluée dans le contexte courant (mois sélectionné).",
+    paramDetails: [
+      { name: "metric", type: "MeasureRef", mode: "EXPR", desc: "Mesure à cumuler depuis le début du mois" }
+    ],
+    code: [
+      "/// MtdCalculation — Cumul depuis le début du mois (MTD)",
+      "/// Réutilisable sur n'importe quelle mesure additive",
+      "FUNCTION MtdCalculation = (",
+      "    metric : MEASURE EXPR",
+      ") =>",
+      "    CALCULATE(",
+      "        metric,",
+      "        DATESMTD( 'Date'[Date] )",
+      "    )",
+      "",
+      "-- Génère instantanément toutes les mesures MTD :",
+      "[CA MTD]      = MtdCalculation( [CA Total] )",
+      "[Marge MTD]   = MtdCalculation( [Marge Brute] )",
+      "[Unités MTD]  = MtdCalculation( [Unités Vendues] )",
+      "[Retours MTD] = MtdCalculation( [Nb Retours] )",
+    ],
+    notes: "Avant les UDF, chaque mesure MTD était une copie quasi-identique. Désormais : une UDF + une ligne par mesure."
+  },
+  {
+    id: 6, title: "AddTaxAndDiscount",
+    subtitle: "Imbrication · UDF dans UDF",
+    badge: "Nested UDF", badgeColor: "#10B981", category: "Imbrication",
+    tags: ["NUMERIC", "VAL", "Nested", "Composition"],
+    useCase: "Démonstration de l'imbrication de UDF. AddTaxAndDiscount appelle AddTax en interne — si le taux de TVA change, une seule modification dans AddTax propage le changement partout.",
+    paramDetails: [
+      { name: "amount",   type: "NUMERIC", mode: "VAL", desc: "Montant brut" },
+      { name: "discount", type: "NUMERIC", mode: "VAL", desc: "Remise à soustraire avant TVA" }
+    ],
+    code: [
+      "/// AddTax — UDF de base (TVA 20%)",
+      "FUNCTION AddTax = (",
+      "    amount : NUMERIC VAL",
+      ") => amount * 1.2",
+      "",
+      "/// AddTaxAndDiscount — Compose AddTax avec une remise préalable",
+      "FUNCTION AddTaxAndDiscount = (",
+      "    amount   : NUMERIC VAL,",
+      "    discount : NUMERIC VAL",
+      ") =>",
+      "    AddTax( amount - discount )   -- appel imbriqué",
+      "",
+      "-- Test :",
+      "DEFINE",
+      "    FUNCTION AddTax = ( amount : NUMERIC VAL ) => amount * 1.2",
+      "    FUNCTION AddTaxAndDiscount = ( amount : NUMERIC VAL, discount : NUMERIC VAL ) =>",
+      "        AddTax( amount - discount )",
+      "EVALUATE",
+      "    { AddTaxAndDiscount( 100, 10 ) }   -- (100-10) * 1.2 = 108",
+      "",
+      "-- Mesure :",
+      "[Prix Final] =",
+      "    CONVERT(",
+      "        AddTaxAndDiscount( SUM(Sales[Prix]), SUM(Sales[Remise]) ),",
+      "        CURRENCY",
+      "    )",
+    ],
+    notes: "La composition de fonctions rend le modèle DRY. Modifier AddTax propage le changement automatiquement dans toutes les UDF qui l'appellent."
+  },
+  {
+    id: 7, title: "ForecastInflation",
+    subtitle: "Decimal · MeasureRef · EXPR · Simulation",
+    badge: "Mixed EXPR / VAL", badgeColor: "#F97316", category: "Simulation",
+    tags: ["DECIMAL", "MeasureRef", "EXPR", "Forecast", "What-if"],
+    useCase: "Simulation de prévision avec taux d'inflation variable (piloté par un slicer What-If). Combine un paramètre VAL (taux fixe) et un paramètre EXPR (mesure réévaluée par mois).",
+    paramDetails: [
+      { name: "baseMetric",    type: "MeasureRef", mode: "EXPR", desc: "Mesure de base (dernières ventes connues)" },
+      { name: "inflationRate", type: "DECIMAL",    mode: "VAL",  desc: "Taux sélectionné dans le slicer What-If" }
+    ],
+    code: [
+      "/// ForecastInflation — Prévision basée sur un taux d'inflation",
+      "/// Combine EXPR (mesure dynamique) et VAL (taux fixé à l'appel)",
+      "FUNCTION ForecastInflation = (",
+      "    baseMetric    : MEASURE EXPR,",
+      "    inflationRate : DECIMAL VAL",
+      ") =>",
+      "    VAR _base   = baseMetric",
+      "    VAR _months = 12",
+      "    RETURN",
+      "        _base * POWER( 1 + inflationRate, _months )",
+      "",
+      "-- Création du paramètre What-If (slicer) :",
+      "-- Taux Inflation = GENERATESERIES( 0, 0.20, 0.01 )",
+      "",
+      "-- Mesures :",
+      "[Taux Sélectionné] = SELECTEDVALUE( 'Taux Inflation'[Taux] )",
+      "[Prévision CA]     =",
+      "    ForecastInflation(",
+      "        [Dernier CA Mensuel Connu],",
+      "        [Taux Sélectionné]",
+      "    )",
+    ],
+    notes: "Le mélange VAL / EXPR permet de séparer ce qui est fixe (le taux) de ce qui dépend du contexte de filtre (la mesure). Pattern très utile pour les simulations What-If."
+  },
+  {
+    id: 8, title: "SafeDivide",
+    subtitle: "AnyVal · VAL · Division zéro-safe générique",
+    badge: "AnyVal VAL", badgeColor: "#6366F1", category: "Utilitaire",
+    tags: ["AnyVal", "VAL", "DIVIDE", "ISBLANK"],
+    useCase: "Division sécurisée avec gestion des cas nuls et valeur de repli configurable. AnyVal accepte tout type scalaire — la fonction est universellement réutilisable.",
+    paramDetails: [
+      { name: "numerator",       type: "AnyVal", mode: "VAL", desc: "Numérateur — tout type scalaire accepté" },
+      { name: "denominator",     type: "AnyVal", mode: "VAL", desc: "Dénominateur — déclenche le repli si 0 ou BLANK" },
+      { name: "alternateResult", type: "AnyVal", mode: "VAL", desc: "Valeur de repli (ex: 0 ou BLANK())" }
+    ],
+    code: [
+      "/// SafeDivide — Division sécurisée, universellement réutilisable",
+      "/// AnyVal accepte tous les types scalaires",
+      "FUNCTION SafeDivide = (",
+      "    numerator       : AnyVal VAL,",
+      "    denominator     : AnyVal VAL,",
+      "    alternateResult : AnyVal VAL",
+      ") =>",
+      "    IF(",
+      "        ISBLANK( denominator ) || denominator = 0,",
+      "        alternateResult,",
+      "        DIVIDE( numerator, denominator, alternateResult )",
+      "    )",
+      "",
+      "-- Utilisations variées :",
+      "[Part de Marché]  = SafeDivide( [CA Produit],   [CA Total Marché], 0 )",
+      "[Taux Conversion] = SafeDivide( [Nb Commandes], [Nb Visites],      BLANK() )",
+      "[Panier Moyen]    = SafeDivide( [CA Total],     [Nb Transactions], 0 )",
+      "[Marge %]         = SafeDivide( [Marge Brute],  [CA Total],        BLANK() )",
+    ],
+    notes: "AnyVal offre la flexibilité maximale. Idéal pour les fonctions utilitaires partagées entre tous les projets et modèles."
+  },
+  {
+    id: 9, title: "BestCustomersByMetric",
+    subtitle: "TableRef · MeasureRef · EXPR · Top N dynamique",
+    badge: "TABLE + MEASURE EXPR", badgeColor: "#EC4899", category: "Avancé",
+    tags: ["TableRef", "MeasureRef", "EXPR", "TOPN"],
+    useCase: "Retourne la table des N meilleurs clients selon n'importe quelle mesure. Paramètre TABLE pour la source, MEASURE EXPR pour la métrique — combinaison puissante pour l'analyse Top N.",
+    paramDetails: [
+      { name: "customerTable", type: "TableRef",   mode: "EXPR", desc: "Table source (ex: 'Clients') — référence lazy" },
+      { name: "metricExpr",    type: "MeasureRef", mode: "EXPR", desc: "Mesure de classement — réévaluée par ligne" },
+      { name: "topN",          type: "INTEGER",    mode: "VAL",  desc: "Nombre de clients à retourner" }
+    ],
+    code: [
+      "/// BestCustomersByMetric — Top N clients par n'importe quelle mesure",
+      "/// Combine TableRef EXPR + MeasureRef EXPR + INTEGER VAL",
+      "FUNCTION BestCustomersByMetric = (",
+      "    customerTable : TABLE   EXPR,",
+      "    metricExpr    : MEASURE EXPR,",
+      "    topN          : INTEGER VAL",
+      ") =>",
+      "    TOPN( topN, customerTable, metricExpr, DESC )",
+      "",
+      "-- Mesures utilisant la fonction :",
+      "[Top 5 CA]     = COUNTROWS( BestCustomersByMetric( 'Clients', [CA Total],    5 ) )",
+      "[Top 10 Marge] = COUNTROWS( BestCustomersByMetric( 'Clients', [Marge Nette], 10 ) )",
+      "",
+      "-- Avec contexte géographique spécifique :",
+      "[Top 3 Région] =",
+      "    COUNTROWS(",
+      "        CALCULATETABLE(",
+      "            BestCustomersByMetric( 'Clients', [CA Total], 3 ),",
+      "            'Géographie'[Région] = \"Île-de-France\"",
+      "        )",
+      "    )",
+    ],
+    notes: "Utiliser une référence à la mesure (pas l'expression SUMX inline) pour déclencher la context transition implicite dans TOPN. C'est le piège classique avec les paramètres EXPR sur des tables."
+  },
+  {
+    id: 10, title: "GenerateSVGBar",
+    subtitle: "Scalaire · DECIMAL VAL · Rendu SVG inline",
+    badge: "SVG / Visual", badgeColor: "#14B8A6", category: "Visualisation",
+    tags: ["DECIMAL", "VAL", "SVG", "Sparkline"],
+    useCase: "Génère un mini-graphique à barres SVG directement dans une cellule de Table ou Matrix. Les UDF SVG sont l'une des applications les plus spectaculaires — elles remplacent des custom visuals payants.",
+    paramDetails: [
+      { name: "valueAC",  type: "DECIMAL", mode: "VAL", desc: "Valeur période actuelle (barre sombre)" },
+      { name: "valuePY",  type: "DECIMAL", mode: "VAL", desc: "Valeur période précédente (barre grise)" },
+      { name: "maxValue", type: "DECIMAL", mode: "VAL", desc: "Maximum pour normaliser les barres" }
+    ],
+    code: [
+      "/// GenerateSVGBar — Mini-graphique comparatif AC vs PY en SVG",
+      "/// Retourne une data URI SVG — Data Category : Image URL",
+      "FUNCTION GenerateSVGBar = (",
+      "    valueAC  : DECIMAL VAL,",
+      "    valuePY  : DECIMAL VAL,",
+      "    maxValue : DECIMAL VAL",
+      ") =>",
+      "    VAR _w    = 80",
+      "    VAR _h    = 24",
+      "    VAR _barW = 10",
+      "    VAR _gap  = 4",
+      "    VAR _hAC  = INT( DIVIDE( valueAC, maxValue ) * _h )",
+      "    VAR _hPY  = INT( DIVIDE( valuePY, maxValue ) * _h )",
+      "    VAR _x1   = 10",
+      "    VAR _x2   = _x1 + _barW + _gap",
+      "    RETURN",
+      '        "data:image/svg+xml;utf8," &',
+      '        "<svg xmlns=\'http://www.w3.org/2000/svg\'" &',
+      '            " width=\'" & _w & "\' height=\'" & _h & "\'>" &',
+      '            "<rect x=\'" & _x1 & "\' y=\'" & ( _h - _hAC ) &',
+      '                "\' width=\'" & _barW & "\' height=\'" & _hAC &',
+      "                \"' fill='#404040'/>\" &",
+      '            "<rect x=\'" & _x2 & "\' y=\'" & ( _h - _hPY ) &',
+      '                "\' width=\'" & _barW & "\' height=\'" & _hPY &',
+      "                \"' fill='#C6C6C6'/>\" &",
+      '        "</svg>"',
+      "",
+      "-- Mesure à placer dans une colonne Image d'une Matrix :",
+      "[Sparkbar CA] =",
+      "    GenerateSVGBar(",
+      "        [CA Période],",
+      "        CALCULATE( [CA Période], DATEADD( 'Date'[Date], -1, YEAR ) ),",
+      "        CALCULATE( MAX( [CA Période] ), ALL( 'Produits' ) )",
+      "    )",
+    ],
+    notes: "Formater la colonne en 'Image URL' dans le visuel Table ou Matrix. Voir daxlib.org pour des bibliothèques SVG prêtes à l'emploi (DaxLib.SVG par SQLBI)."
+  }
+];
+
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+
+const CATEGORY_COLORS = {
+  "Basique":           "#3B82F6",
+  "Formatage":         "#8B5CF6",
+  "Métier":            "#F59E0B",
+  "Time Intelligence": "#EF4444",
+  "Imbrication":       "#10B981",
+  "Simulation":        "#F97316",
+  "Utilitaire":        "#6366F1",
+  "Avancé":            "#EC4899",
+  "Visualisation":     "#14B8A6",
+};
+
+const DAX_KEYWORDS = new Set([
+  "FUNCTION","DEFINE","EVALUATE","RETURN","VAR","IF","SWITCH","TRUE","FALSE",
+  "BLANK","CALCULATE","CALCULATETABLE","TOPN","DIVIDE","ISBLANK","FORMAT",
+  "DATEADD","DATESMTD","POWER","SUMX","SUM","MAX","MIN","ALL","ALLSELECTED",
+  "SELECTEDVALUE","COUNTROWS","INT","CONVERT","GENERATESERIES","REPT",
+  "CONCATENATEX","SUMMARIZE","FILTER","MAXX","MINX","DESC","ASC","YEAR","MONTH"
+]);
+
+const DAX_TYPES = new Set([
+  "MEASURE","NUMERIC","DECIMAL","INTEGER","DOUBLE","STRING","AnyVal",
+  "TABLE","TableRef","MeasureRef","EXPR","VAL","CURRENCY","BOOLEAN"
+]);
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let selectedId = 1;
+let activeFilter = "Tous";
+
+// ─── TOKENIZER ───────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function tokenizeLine(line) {
+  const trimmed = line.trimStart();
+  if (trimmed.startsWith("///") || trimmed.startsWith("--")) {
+    return `<span class="t-comment">${esc(line)}</span>`;
+  }
+  let html = "";
+  let i = 0;
+  while (i < line.length) {
+    if (line[i] === "-" && line[i+1] === "-") {
+      html += `<span class="t-comment">${esc(line.slice(i))}</span>`;
+      break;
+    }
+    if (line[i] === '"') {
+      let j = i+1;
+      while (j < line.length && line[j] !== '"') j++;
+      html += `<span class="t-string">${esc(line.slice(i, j+1))}</span>`;
+      i = j+1; continue;
+    }
+    if (line[i] === "'") {
+      let j = i+1;
+      while (j < line.length && line[j] !== "'") j++;
+      let end = j+1;
+      if (end < line.length && line[end] === "[") {
+        while (end < line.length && line[end] !== "]") end++;
+        end++;
+      }
+      html += `<span class="t-ref">${esc(line.slice(i, end))}</span>`;
+      i = end; continue;
+    }
+    if (line[i] === "[") {
+      let j = i+1;
+      while (j < line.length && line[j] !== "]") j++;
+      html += `<span class="t-ref">${esc(line.slice(i, j+1))}</span>`;
+      i = j+1; continue;
+    }
+    if (/[0-9]/.test(line[i])) {
+      let j = i;
+      while (j < line.length && /[0-9.]/.test(line[j])) j++;
+      html += `<span class="t-number">${esc(line.slice(i,j))}</span>`;
+      i = j; continue;
+    }
+    if (/[A-Za-z_]/.test(line[i])) {
+      let j = i;
+      while (j < line.length && /[A-Za-z0-9_]/.test(line[j])) j++;
+      const word = line.slice(i,j);
+      const cls = DAX_KEYWORDS.has(word) ? "t-keyword"
+                : DAX_TYPES.has(word)    ? "t-type"
+                : "t-plain";
+      html += `<span class="${cls}">${esc(word)}</span>`;
+      i = j; continue;
+    }
+    html += `<span class="t-plain">${esc(line[i])}</span>`;
+    i++;
+  }
+  return html;
+}
+
+// ─── RENDER HELPERS ──────────────────────────────────────────────────────────
+
+function getCategories() {
+  return ["Tous", ...new Set(examples.map(e => e.category))];
+}
+
+function getFiltered() {
+  return activeFilter === "Tous"
+    ? examples
+    : examples.filter(e => e.category === activeFilter);
+}
+
+function getCurrent() {
+  return examples.find(e => e.id === selectedId) || examples[0];
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+
+function renderSidebar() {
+  // Category filters
+  const cats = getCategories();
+  const filterHtml = cats.map(cat => {
+    const col = CATEGORY_COLORS[cat] || "#3B82F6";
+    const active = activeFilter === cat;
+    const bg     = active ? col + "25" : "transparent";
+    const color  = active ? col : "#64748B";
+    const border = active ? col + "60" : "#1e2a4e";
+    const fw     = active ? "700" : "400";
+    return `<button class="cat-btn${active ? ' active' : ''}"
+      style="background:${bg};color:${color};border-color:${border};font-weight:${fw};"
+      onclick="setFilter('${cat}')">${cat}</button>`;
+  }).join("");
+  document.getElementById("cat-filters").innerHTML = filterHtml;
+
+  // Item list
+  const filtered = getFiltered();
+  const listHtml = filtered.map(ex => {
+    const isActive = ex.id === selectedId;
+    const bg = isActive ? ex.badgeColor + "10" : "transparent";
+    const borderCol = isActive ? ex.badgeColor : "transparent";
+    const titleCol  = isActive ? "#fff" : "#CBD5E1";
+    return `
+      <div class="sidebar-item" onclick="selectItem(${ex.id})"
+        style="border-left-color:${borderCol};background:${bg};">
+        <div class="sidebar-item-top">
+          <span class="item-num">${ex.id}</span>
+          <span class="item-title" style="color:${titleCol}">
+            ${esc(ex.title)}<span class="paren">()</span>
+          </span>
+        </div>
+        <div class="item-meta">
+          <span class="item-badge"
+            style="background:${ex.badgeColor}20;color:${ex.badgeColor};border:1px solid ${ex.badgeColor}40;">
+            ${esc(ex.badge)}
+          </span>
+          <span class="item-cat">${esc(ex.category)}</span>
+        </div>
+      </div>`;
+  }).join("");
+  document.getElementById("item-list").innerHTML = listHtml;
+}
+
+// ─── MAIN PANEL ──────────────────────────────────────────────────────────────
+
+function renderMain() {
+  const cur = getCurrent();
+
+  // Title icon
+  const icon = document.getElementById("title-icon");
+  icon.style.cssText = `
+    background: linear-gradient(135deg, ${cur.badgeColor}30, ${cur.badgeColor}10);
+    border: 1px solid ${cur.badgeColor}40;
+    border-radius: 8px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    color: ${cur.badgeColor}; font-weight: 800; font-size: 14px;
+    font-family: monospace; flex-shrink: 0;`;
+  icon.textContent = cur.id;
+
+  document.getElementById("main-title").innerHTML =
+    esc(cur.title) + '<span style="color:#475569">()</span>';
+  document.getElementById("main-subtitle").textContent = cur.subtitle;
+
+  // Tags
+  document.getElementById("tags-row").innerHTML =
+    cur.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("");
+
+  // Use case
+  const uc = document.getElementById("use-case");
+  uc.style.background = "#0f0f2e";
+  uc.style.border = `1px solid ${cur.badgeColor}30`;
+  uc.style.borderLeft = `3px solid ${cur.badgeColor}`;
+  document.getElementById("use-case-label").style.color = cur.badgeColor;
+  document.getElementById("use-case-text").textContent = cur.useCase;
+
+  // Params
+  const pbody = document.getElementById("param-body");
+  pbody.innerHTML = cur.paramDetails.map((p, i) => {
+    const rowBg = i % 2 === 0 ? "#0b0b1c" : "#0f0f26";
+    const modeClass = p.mode === "EXPR" ? "badge-expr" : "badge-val";
+    return `<tr style="background:${rowBg}">
+      <td class="td-name">${esc(p.name)}</td>
+      <td><span class="badge-type">${esc(p.type)}</span></td>
+      <td><span class="badge-mode ${modeClass}">${esc(p.mode)}</span></td>
+      <td class="td-desc">${esc(p.desc)}</td>
+    </tr>`;
+  }).join("");
+
+  // Code
+  const pre = document.getElementById("code-pre");
+  pre.innerHTML = cur.code.map(line =>
+    `<div>${tokenizeLine(line) || "&nbsp;"}</div>`
+  ).join("");
+
+  // Note
+  document.getElementById("note-text").textContent = cur.notes;
+
+  // Nav
+  document.getElementById("nav-counter").textContent =
+    `${selectedId} / ${examples.length}`;
+  document.getElementById("btn-prev").disabled = selectedId === 1;
+  document.getElementById("btn-next").disabled = selectedId === examples.length;
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+
+function setFilter(cat) {
+  activeFilter = cat;
+  // If current item not in filtered, select first of filtered
+  const filtered = getFiltered();
+  if (!filtered.find(e => e.id === selectedId)) {
+    selectedId = filtered[0].id;
+  }
+  renderSidebar();
+  renderMain();
+}
+
+function selectItem(id) {
+  selectedId = id;
+  renderSidebar();
+  renderMain();
+}
+
+function navigate(dir) {
+  const newId = selectedId + dir;
+  if (newId >= 1 && newId <= examples.length) {
+    selectedId = newId;
+    // If new item not visible under current filter, reset filter
+    const filtered = getFiltered();
+    if (!filtered.find(e => e.id === selectedId)) {
+      activeFilter = "Tous";
+    }
+    renderSidebar();
+    renderMain();
+  }
+}
+
+function copyCode() {
+  const cur = getCurrent();
+  const text = cur.code.join("\n");
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copy-btn");
+    btn.textContent = "✓ Copié";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "Copier";
+      btn.classList.remove("copied");
+    }, 2000);
+  }).catch(() => {
+    // Fallback for environments without clipboard API (Power BI)
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    const btn = document.getElementById("copy-btn");
+    btn.textContent = "✓ Copié";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copier"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>
