@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    background: #080818;
+    color: #E2E8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: linear-gradient(135deg, #0f0f2e 0%, #1a0a2e 50%, #0a1a2e 100%);
+    border-bottom: 1px solid #1e2a4e;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  #header-icon {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    border-radius: 10px;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; color: #fff; font-weight: 800;
+    font-family: monospace;
+  }
+  #header h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+  #header p  { font-size: 11px; color: #64748B; margin-top: 2px; }
+  #header-badges {
+    margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .hbadge { border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700; }
+  .hbadge-red  { background: #EF444420; color: #F87171; border: 1px solid #EF444440; }
+  .hbadge-green{ background: #10B98120; color: #4ADE80; border: 1px solid #10B98140; }
+  #logo-sep { width: 1px; height: 24px; background: #1e2a4e; flex-shrink: 0; }
+  #kpi-logo {
+    height: 32px; width: auto; opacity: 0.92;
+    filter: brightness(0) invert(1); transition: opacity .2s;
+  }
+  #kpi-logo:hover { opacity: 1; }
+
+  /* ── CONTENT ── */
+  #content {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ── PAGE TITLE ── */
+  .page-title {
+    font-size: 17px; font-weight: 800; color: #F1F5F9;
+    margin-bottom: 10px; letter-spacing: -0.01em;
+  }
+  .page-intro {
+    font-size: 13px; color: #94A3B8; line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .page-intro strong {
+    color: #E2E8F0; font-weight: 700;
+    background: #1e2a4e; padding: 1px 6px; border-radius: 3px;
+  }
+
+  /* ── COMPARISON CARDS ── */
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 680px) {
+    .cards-row { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    border-radius: 10px;
+    border: 1px solid #1e2a4e;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-val  { border-color: #EF444440; }
+  .card-expr { border-color: #10B98140; }
+
+  .card-header {
+    padding: 10px 16px;
+    font-size: 12px; font-weight: 700;
+    font-family: monospace; letter-spacing: .04em;
+  }
+  .card-val  .card-header { background: #EF444415; color: #F87171; border-bottom: 1px solid #EF444430; }
+  .card-expr .card-header { background: #10B98115; color: #4ADE80; border-bottom: 1px solid #10B98130; }
+
+  /* Code block inside card */
+  .card-code {
+    background: #1E1E1E;
+    border-bottom: 1px solid #2d2d2d;
+    padding: 14px 16px;
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 12px; line-height: 1.75;
+  }
+  .card-code div { white-space: pre; }
+
+  /* Syntax */
+  .t-kw  { color: #569CD6; }
+  .t-fn  { color: #DCDCAA; }
+  .t-ty  { color: #4EC9B0; }
+  .t-ref { color: #9CDCFE; }
+  .t-cm  { color: #6A9955; font-style: italic; }
+  .t-num { color: #B5CEA8; }
+  .t-val { color: #F87171; font-weight: 700; }
+  .t-ex  { color: #4ADE80; font-weight: 700; }
+
+  /* Card body text */
+  .card-body {
+    padding: 14px 16px;
+    font-size: 12.5px; color: #94A3B8; line-height: 1.7;
+    flex: 1;
+  }
+  .card-body code {
+    font-family: monospace; font-size: 11px;
+    background: #1e2a4e; color: #9CDCFE;
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* Result box */
+  .result-box {
+    margin: 12px 16px 14px;
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: 12.5px; line-height: 1.6;
+  }
+  .result-val  {
+    background: #3b151520;
+    border: 1px solid #EF444430;
+    border-left: 3px solid #EF4444;
+    color: #FCA5A5;
+  }
+  .result-expr {
+    background: #10b98115;
+    border: 1px solid #10B98130;
+    border-left: 3px solid #10B981;
+    color: #6EE7B7;
+  }
+  .result-box strong { font-weight: 700; }
+  .result-val  strong { color: #F87171; }
+  .result-expr strong { color: #4ADE80; }
+
+  /* ── DATA TABLE ── */
+  .section-label {
+    font-size: 10px; font-weight: 700; color: #64748B;
+    letter-spacing: .1em; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, #1e2a4e, transparent);
+  }
+
+  .table-wrap {
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid #1e2a4e; margin-bottom: 24px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  thead tr { background: #1a1a2e; }
+  th {
+    padding: 10px 18px; text-align: left;
+    color: #94A3B8; font-weight: 700; font-size: 11px;
+    letter-spacing: .06em; border-bottom: 1px solid #1e2a4e;
+    font-family: monospace;
+  }
+  td {
+    padding: 11px 18px; border-bottom: 1px solid #12122a;
+    vertical-align: middle; color: #CBD5E1;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(odd)  { background: #0b0b1c; }
+  tbody tr:nth-child(even) { background: #0f0f26; }
+  tbody tr:hover td { background: rgba(59,130,246,0.05); }
+
+  td.cat { font-weight: 700; color: #E2E8F0; }
+  td.val-col { color: #F87171; font-weight: 700; font-family: monospace; font-size: 13px; }
+  td.expr-col { color: #4ADE80; font-weight: 700; font-family: monospace; font-size: 13px; }
+  td.ecart { color: #64748B; font-size: 12px; }
+
+  /* ── GOLDEN RULE BOX ── */
+  #golden-rule {
+    background: #0f0f2e;
+    border: 1px solid #1e2a4e;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  #golden-rule h3 {
+    font-size: 14px; font-weight: 800; color: #F1F5F9;
+    margin-bottom: 14px;
+  }
+  .rule-item {
+    display: flex; align-items: flex-start;
+    gap: 12px; margin-bottom: 12px;
+    font-size: 12.5px; color: #94A3B8; line-height: 1.65;
+  }
+  .rule-item:last-child { margin-bottom: 0; }
+  .rule-badge {
+    border-radius: 5px; padding: 3px 10px;
+    font-size: 11px; font-weight: 700; font-family: monospace;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .rb-val  { background: #3b1515; color: #F87171; border: 1px solid #EF444440; }
+  .rb-expr { background: #1a2e1a; color: #4ADE80; border: 1px solid #10B98140; }
+  .rb-same { background: #1e2a4e; color: #93C5FD; border: 1px solid #3B82F640; }
+  .rule-item strong { color: #E2E8F0; font-weight: 700; }
+  .rule-item code {
+    font-family: monospace; font-size: 11px;
+    background: #1e2a4e; color: #9CDCFE;
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2a4e; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-icon">ƒ</div>
+  <div>
+    <h1>Power BI · DAX User-Defined Functions</h1>
+    <p>VAL vs EXPR avec ALL — divergence des modes de passage · Preview depuis sept. 2025</p>
+  </div>
+  <div id="header-badges">
+    <span class="hbadge hbadge-red">EXPR = Lazy</span>
+    <span class="hbadge hbadge-green">VAL = Eager</span>
+    <div id="logo-sep"></div>
+    <img id="kpi-logo" src="https://kpi-consulting.fr/wp-content/uploads/2024/02/logo-kpi.svg" alt="KPI Consulting"/>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- PAGE TITLE -->
+  <div class="page-title">Quand la différence apparaît vraiment</div>
+  <p class="page-intro">
+    Modifiez la fonction pour qu'elle <strong>ignore le contexte courant</strong> avec ALL —
+    là, VAL et EXPR divergent immédiatement.
+  </p>
+
+  <!-- CARDS -->
+  <div class="cards-row">
+
+    <!-- CARD VAL -->
+    <div class="card card-val">
+      <div class="card-header">Avec VAL + ALL</div>
+      <div class="card-code">
+        <div><span class="t-kw">FUNCTION</span> <span class="t-fn">SommeAvecTotal</span> = (</div>
+        <div>  A : <span class="t-ty">INT64</span> <span class="t-val">VAL</span>,</div>
+        <div>  B : <span class="t-ty">INT64</span> <span class="t-val">VAL</span></div>
+        <div>) =></div>
+        <div>  <span class="t-kw">CALCULATE</span>( A + B, <span class="t-kw">ALL</span>(Membres) )</div>
+        <div><span class="t-cm">-- ALL sans effet : A+B déjà scalaires</span></div>
+      </div>
+      <div class="card-body">
+        A et B sont déjà des nombres (ex: <code>6</code> et <code>4</code>).
+        Le ALL ne peut pas les "dé-calculer". La fonction retourne <code>10</code> —
+        la valeur de la ligne, pas le total.
+      </div>
+      <div class="result-box result-val">
+        Résultat : <strong>valeur de la ligne</strong> — ALL ignoré car les scalaires sont figés.
+      </div>
+    </div>
+
+    <!-- CARD EXPR -->
+    <div class="card card-expr">
+      <div class="card-header">Avec EXPR + ALL</div>
+      <div class="card-code">
+        <div><span class="t-kw">FUNCTION</span> <span class="t-fn">SommeAvecTotal</span> = (</div>
+        <div>  A : <span class="t-ty">INT64</span> <span class="t-ex">EXPR</span>,</div>
+        <div>  B : <span class="t-ty">INT64</span> <span class="t-ex">EXPR</span></div>
+        <div>) =></div>
+        <div>  <span class="t-kw">CALCULATE</span>( A + B, <span class="t-kw">ALL</span>(Membres) )</div>
+        <div><span class="t-cm">-- ALL agit AVANT l'évaluation de A+B</span></div>
+      </div>
+      <div class="card-body">
+        A et B sont des expressions non-évaluées. CALCULATE applique ALL,
+        puis évalue A (<code>[Nb_Adultes]</code>) et B (<code>[Nb_Enfants]</code>)
+        dans ce nouveau contexte sans filtre.
+      </div>
+      <div class="result-box result-expr">
+        Résultat : <strong>total général</strong> (12) sur chaque ligne —
+        ALL a effacé le filtre avant l'évaluation.
+      </div>
+    </div>
+
+  </div><!-- /cards-row -->
+
+  <!-- DATA TABLE -->
+  <div class="section-label">RÉSULTATS PAR CATÉGORIE</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Catégorie</th>
+          <th>VAL + ALL</th>
+          <th>EXPR + ALL</th>
+          <th>Écart</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cat">Adultes</td>
+          <td class="val-col">6</td>
+          <td class="expr-col">12</td>
+          <td class="ecart">ALL ignoré / ALL actif</td>
+        </tr>
+        <tr>
+          <td class="cat">Enfants</td>
+          <td class="val-col">4</td>
+          <td class="expr-col">12</td>
+          <td class="ecart">ALL ignoré / ALL actif</td>
+        </tr>
+        <tr>
+          <td class="cat">Séniors</td>
+          <td class="val-col">2</td>
+          <td class="expr-col">12</td>
+          <td class="ecart">ALL ignoré / ALL actif</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GOLDEN RULE -->
+  <div id="golden-rule">
+    <h3>La règle d'or</h3>
+
+    <div class="rule-item">
+      <span class="rule-badge rb-val">VAL</span>
+      <span>→ l'expression est évaluée <strong>avant</strong> d'entrer dans la fonction.
+      CALCULATE interne ne peut plus la modifier.</span>
+    </div>
+
+    <div class="rule-item">
+      <span class="rule-badge rb-expr">EXPR</span>
+      <span>→ l'expression est évaluée <strong>à l'intérieur</strong> du contexte
+      que la fonction construit via CALCULATE.</span>
+    </div>
+
+    <div class="rule-item">
+      <span class="rule-badge rb-same">Identiques</span>
+      <span>→ quand la fonction ne modifie pas le contexte (comme <code>A + B</code> seul),
+      VAL/EXPR ne divergent que si un CALCULATE, ALL, DATEADD… intervient
+      <strong>dans le corps de la fonction</strong>.</span>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</body>
+</html>
