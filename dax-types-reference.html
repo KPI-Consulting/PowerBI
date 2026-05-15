@@ -36,7 +36,20 @@
   }
   #header h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
   #header p  { font-size: 11px; color: #64748B; margin-top: 2px; }
-  #header-badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  #header-badges { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  #kpi-logo {
+    height: 32px;
+    width: auto;
+    opacity: 0.92;
+    filter: brightness(0) invert(1);
+    transition: opacity .2s;
+  }
+  #kpi-logo:hover { opacity: 1; }
+  #logo-sep {
+    width: 1px; height: 24px;
+    background: #1e2a4e;
+    flex-shrink: 0;
+  }
   .hbadge {
     border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
   }
@@ -212,6 +225,8 @@
   <div id="header-badges">
     <span class="hbadge hbadge-red">EXPR = Lazy</span>
     <span class="hbadge hbadge-green">VAL = Eager</span>
+    <div id="logo-sep"></div>
+    <img id="kpi-logo" src="https://kpi-consulting.fr/wp-content/uploads/2024/02/logo-kpi.svg" alt="KPI Consulting" />
   </div>
 </div>
 
