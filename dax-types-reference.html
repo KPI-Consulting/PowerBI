@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    background: #080818;
+    color: #E2E8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: linear-gradient(135deg, #0f0f2e 0%, #1a0a2e 50%, #0a1a2e 100%);
+    border-bottom: 1px solid #1e2a4e;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  #header-icon {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    border-radius: 10px;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; color: #fff; font-weight: 800;
+    font-family: monospace;
+  }
+  #header h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+  #header p  { font-size: 11px; color: #64748B; margin-top: 2px; }
+  #header-badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .hbadge {
+    border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+  }
+  .hbadge-red  { background: #EF444420; color: #F87171; border: 1px solid #EF444440; }
+  .hbadge-green{ background: #10B98120; color: #4ADE80; border: 1px solid #10B98140; }
+
+  /* ── CONTENT ── */
+  #content {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px; font-weight: 700; color: #64748B;
+    letter-spacing: .1em; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #1e2a4e, transparent);
+  }
+
+  /* ── TABLE WRAPPER ── */
+  .table-wrap {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #1e2a4e;
+    margin-bottom: 24px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  /* ── THEAD ── */
+  thead tr {
+    background: #1a1a2e;
+  }
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    color: #94A3B8;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .06em;
+    border-bottom: 1px solid #1e2a4e;
+    font-family: monospace;
+  }
+  th:first-child { width: 130px; }
+  th:nth-child(2){ width: 120px; }
+  th:nth-child(3){ width: 110px; }
+
+  /* ── TBODY ── */
+  tr.type-row {
+    background: #0c0c20;
+    border-top: 2px solid #1e2a4e;
+  }
+  tr.sub-row-even { background: #0b0b1c; }
+  tr.sub-row-odd  { background: #0f0f26; }
+
+  tr:hover td { background: rgba(59,130,246,0.04); }
+
+  td {
+    padding: 9px 16px;
+    border-bottom: 1px solid #12122a;
+    vertical-align: middle;
+    line-height: 1.5;
+    color: #CBD5E1;
+  }
+
+  /* ── TYPE CELL ── */
+  .cell-type {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .cell-subtype {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+  }
+
+  /* ── MODE BADGES ── */
+  .mode-wrap { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .badge-mode {
+    border-radius: 4px; padding: 2px 8px;
+    font-family: monospace; font-size: 10px; font-weight: 700;
+    display: inline-block;
+  }
+  .badge-val  { background: #1a2e1a; color: #4ADE80; border: 1px solid #10B98130; }
+  .badge-expr { background: #3b1515; color: #F87171; border: 1px solid #EF444430; }
+
+  /* ── TYPE COLOR ACCENTS ── */
+  .type-anyval   .cell-type { color: #3B82F6; }
+  .type-scalaire .cell-type { color: #8B5CF6; }
+  .type-tableau  .cell-type { color: #F59E0B; }
+  .type-anyref   .cell-type { color: #EC4899; }
+
+  .type-anyval   td:first-child { border-left: 3px solid #3B82F6; }
+  .type-scalaire td:first-child { border-left: 3px solid #8B5CF6; }
+  .type-tableau  td:first-child { border-left: 3px solid #F59E0B; }
+  .type-anyref   td:first-child { border-left: 3px solid #EC4899; }
+
+  /* Sub-rows inherit parent accent */
+  .sub-anyval   td:first-child { border-left: 3px solid #3B82F620; }
+  .sub-scalaire td:first-child { border-left: 3px solid #8B5CF620; }
+  .sub-tableau  td:first-child { border-left: 3px solid #F59E0B20; }
+
+  /* Subtype label pill */
+  .subtype-pill {
+    display: inline-block;
+    background: #1e2a4e;
+    color: #60A5FA;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .sub-scalaire .subtype-pill { background: #2a1a4e; color: #A78BFA; }
+  .sub-tableau  .subtype-pill { background: #2e2000; color: #FCD34D; }
+
+  /* ── REMARKS ── */
+  .td-remark { color: #94A3B8; font-size: 12px; line-height: 1.6; }
+  .type-row .td-remark { color: #CBD5E1; }
+
+  /* ── LEGEND ── */
+  #legend {
+    display: flex; gap: 16px; align-items: center;
+    padding: 14px 18px;
+    background: #0a0a1e;
+    border: 1px solid #1e2a4e;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-label {
+    font-size: 10px; font-weight: 700; color: #475569;
+    letter-spacing: .08em; margin-right: 4px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: #64748B;
+  }
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2a4e; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-icon">T</div>
+  <div>
+    <h1>Power BI · DAX — Types de paramètres UDF</h1>
+    <p>Référence complète des types, sous-types et modes de passage · Preview depuis sept. 2025</p>
+  </div>
+  <div id="header-badges">
+    <span class="hbadge hbadge-red">EXPR = Lazy</span>
+    <span class="hbadge hbadge-green">VAL = Eager</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- LEGEND -->
+  <div id="legend">
+    <span class="legend-label">TYPES</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#3B82F6"></div>ANYVAL</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>SCALAIRE</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>TABLEAU</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EC4899"></div>ANYREF</div>
+    <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+      <span class="legend-label">MODES</span>
+      <span class="badge-mode badge-val">VAL</span>
+      <span class="badge-mode badge-expr">EXPR</span>
+    </div>
+  </div>
+
+  <div class="section-label">TABLEAU DE RÉFÉRENCE</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Sous-type</th>
+          <th>Mode de passage</th>
+          <th>Remarques</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ── ANYVAL ── -->
+        <tr class="type-row type-anyval">
+          <td class="cell-type">ANYVAL</td>
+          <td></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span></div></td>
+          <td class="td-remark">Aucune restriction, toute expression peut être utilisée. Il s'agit du comportement par défaut.</td>
+        </tr>
+
+        <!-- ── SCALAIRE ── -->
+        <tr class="type-row type-scalaire">
+          <td class="cell-type">SCALAIRE</td>
+          <td></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Toute valeur scalaire, comme un entier ou une chaîne de caractères ; les tables ne peuvent pas être utilisées.</td>
+        </tr>
+        <tr class="sub-row-even sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">VARIANTE</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, tout type de données convient.</td>
+        </tr>
+        <tr class="sub-row-odd sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">INT64</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être Integer.</td>
+        </tr>
+        <tr class="sub-row-even sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">DÉCIMAL</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être décimal fixe.</td>
+        </tr>
+        <tr class="sub-row-odd sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">DOUBLE</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être décimal.</td>
+        </tr>
+        <tr class="sub-row-even sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">CHAÎNE</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être une chaîne de caractères.</td>
+        </tr>
+        <tr class="sub-row-odd sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">DATE&nbsp;HEURE</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être Date ou DateTime.</td>
+        </tr>
+        <tr class="sub-row-even sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">BOOLÉEN</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être booléen.</td>
+        </tr>
+        <tr class="sub-row-odd sub-scalaire">
+          <td></td>
+          <td><span class="subtype-pill">NUMÉRIQUE</span></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Expression scalaire, le type de données doit être Integer.</td>
+        </tr>
+
+        <!-- ── TABLEAU ── -->
+        <tr class="type-row type-tableau">
+          <td class="cell-type">TABLEAU</td>
+          <td></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-val">VAL</span><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Les expressions tabulaires ne sont pas autorisées ; les scalaires ne le sont pas.</td>
+        </tr>
+
+        <!-- ── ANYREF ── -->
+        <tr class="type-row type-anyref">
+          <td class="cell-type">ANYREF</td>
+          <td></td>
+          <td><div class="mode-wrap"><span class="badge-mode badge-expr">EXPR</span></div></td>
+          <td class="td-remark">Une référence à un tableau, une colonne, une mesure ou un calendrier.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- NOTE -->
+  <div style="background:#1a1505;border:1px solid #78350f40;border-left:3px solid #F59E0B;border-radius:8px;padding:12px 16px;">
+    <div style="font-size:10px;font-weight:700;color:#F59E0B;letter-spacing:.1em;margin-bottom:5px;">NOTE IMPORTANTE</div>
+    <p style="color:#FCD34D;font-size:12.5px;line-height:1.6;">
+      Le mode <span style="font-family:monospace;background:#1a2e1a;color:#4ADE80;padding:1px 6px;border-radius:3px;">VAL</span> évalue l'argument <strong>immédiatement</strong> avant l'appel (eager).
+      Le mode <span style="font-family:monospace;background:#3b1515;color:#F87171;padding:1px 6px;border-radius:3px;">EXPR</span> transmet l'expression de façon <strong>paresseuse</strong> (lazy) — elle est réévaluée dans chaque contexte de filtre à l'intérieur de la fonction.
+      Utiliser VAL sur une mesure dans une matrice revient à la figer à une seule valeur pour toute la colonne.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
